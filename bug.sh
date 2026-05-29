@@ -132,6 +132,13 @@ list () {
 	echo "$output"
 }
 
+version () {
+	echo "bug-fork 0.5 - Simple ToDo cli manager"
+	echo "Copyright (C) 2006 Lluis Batlle i Rossell"
+	echo "With modifications bvy regexghost"
+	echo "License: GPL 2"
+}
+
 CMD="$1"
 
 case "$CMD" in

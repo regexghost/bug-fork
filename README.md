@@ -6,6 +6,7 @@ This is my fork/rewrite of bug, an obscure cli todo manager I found on the inter
 
 ## My Changes
 
+* Now uses `/bin/sh` instead of `bash`
 * Input basic info with `read`, so you don't have to navigate around a text file
 * Coloured output
 * Sorting by priority
