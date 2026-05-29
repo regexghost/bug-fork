@@ -81,7 +81,7 @@ lineToFile () {
 
 	touch /tmp/bug_todo_temp
 	echo "ID: ${id}" >> /tmp/bug_todo_temp
-	echo "Priority: ${priority}" >> /tmp/bug_todo_temp
+	echo "Priority: ${prior}" >> /tmp/bug_todo_temp
 	echo "State: ${state}" >> /tmp/bug_todo_temp
 	echo "Subject: ${subject}" >> /tmp/bug_todo_temp
 	echo "-- Description Below --" >> /tmp/bug_todo_temp
@@ -127,4 +127,39 @@ list () {
 	echo "$output"
 }
 
-list
+CMD="$1"
+
+case "$CMD" in
+	-h)
+		printHelp
+		exit 1
+		;;
+	a*)
+		add || exit 1
+		;;
+	l*)
+		list || exit 1
+		;;
+	ver*)
+		version || exit 1
+		;;
+	v*)
+		view || exit 1
+		;;
+	p*)
+		echo Project: "$BUG_PROJECT"
+		;;
+	del*)
+		delete || exit 1
+		;;
+	create)
+		create || exit 1
+		;;
+	e*)
+		edit || exit 1
+		;;
+	*)
+		printHelp
+		exit 1
+		;;
+esac
