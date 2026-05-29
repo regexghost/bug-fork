@@ -6,6 +6,7 @@ GREEN="\033[32m"
 YELLOW="\033[33m"
 BLUE="\033[34m"
 MAGENTA="\033[35m"
+CYAN="\033[36m"
 RESET_COLOUR="\033[0m"
 
 [ -f /tmp/bug_todo_temp ] && rm /tmp/bug_todo_temp
