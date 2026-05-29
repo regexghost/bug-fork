@@ -1,4 +1,9 @@
 #!/bin/sh
+# (encoding: UTF-8)
+#
+# bug-fork, regexghost's fork/re-write of bug by Lluis Batlle i Rossell
+# Simple ToDo terminal cli tool
+# LICENSE: GPL 2 (see LICENSE file)
 
 BOLD="\033[1m"
 RED="\033[31m"
