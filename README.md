@@ -13,6 +13,12 @@ This is my fork/rewrite of bug, an obscure cli todo manager I found on the inter
 * Interactive selection using `fzf`, instead of specifying ID
 * Deletion only moves to another file, allowing recovery
 
+## Screenshots
+
+![bug ls](bug-ls.jpg)
+
+![bug view](bug-view.jpg)
+
 ## Dependencies
 
 * `fzf`
