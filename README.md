@@ -25,7 +25,7 @@ cd bug-fork
 make install
 ```
 
-Add `BUG_PROJECT=${HOME}/*location*` to `~/.profile` or `~/.bashrc` 
+Add `BUG_PROJECT=${HOME}/*location*` to `~/.profile` or `~/.bashrc`  
 e.g. `echo 'BUG_PROJECT="${HOME}/Documents/bug-todo"' >> ~/.bashrc`
 
 ## Usage
@@ -34,12 +34,12 @@ e.g. `echo 'BUG_PROJECT="${HOME}/Documents/bug-todo"' >> ~/.bashrc`
 
 ### Commands
 
-`bug list` - List all active todos
-`bug view` - View details for a specific todo - uses `fzf` to select
-`bug add` - Add new todo
-`bug delete` - Delete specific todo - uses `fzf`
-`bug edit` - Edit specific todo - uses `fzf`
-`bug restore` - Restore deleted todo - uses `fzf`
+`bug list` - List all active todos  
+`bug view` - View details for a specific todo - uses `fzf` to select  
+`bug add` - Add new todo  
+`bug delete` - Delete specific todo - uses `fzf`  
+`bug edit` - Edit specific todo - uses `fzf`  
+`bug restore` - Restore deleted todo - uses `fzf`  
 
 ## License
 
