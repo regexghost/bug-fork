@@ -159,6 +159,11 @@ version () {
 	echo "License: GPL 2"
 }
 
+project () {
+	echo "Project file: $BUG_PROJECT"
+	echo "Deleted file: $BUG_PROJECT_DEL"
+}
+
 PNAME="$(basename "$0")"
 
 printHelp () {
@@ -194,7 +199,7 @@ case "$CMD" in
 		view || exit 1
 		;;
 	p*)
-		echo Project: "$BUG_PROJECT"
+		project
 		;;
 	del*)
 		delete || exit 1
