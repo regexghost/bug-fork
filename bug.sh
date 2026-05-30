@@ -14,6 +14,8 @@ MAGENTA="\033[35m"
 CYAN="\033[36m"
 RESET_COLOUR="\033[0m"
 
+BUG_PROJECT_DEL="$(dirname "$BUG_PROJECT")/.$(basename "$BUG_PROJECT")-del"
+
 [ -f /tmp/bug_todo_temp ] && rm /tmp/bug_todo_temp
 
 get_next_id () {
@@ -29,11 +31,11 @@ reNL () {
 }
 
 priorNumToName () {
-	sed 's/^1$/URGENT/g; s/^2$/High/g; s/^3$/Medium/g; s/^4$/Low/g; s/^5$/Whenever/g'
+	sed 's/\t1\t/\tURGENT\t/g; s/\t2\t/\tHigh\t/g; s/\t3\t/\tMedium\t/g; s/\t4\t/\tLow\t/g; s/\t5\t/\tWhenever\t/g'
 }
 
 priorNameToNum () {
-	sed 's/^URGENT$/1/g; s/^High$/2/g; s/^Medium$/3/g; s/^Low$/4/g; s/^Whenever$/5/'
+	sed 's/\tURGENT\t/\t1\t/g; s/\tHigh\t/\t2\t/g; s/\tMedium\t/\t3\t/g; s/\tLow\t/\t4\t/g; s/\tWhenever\t/\t5\t/'
 }
 
 trim () {
@@ -60,7 +62,7 @@ add () {
 	id=$(get_next_id)
 
 	read -p "Enter Priority (1,2,3.. 1=highest): " priority
-	priority=$(echo $priority | priorNumToName)
+	priority=$(echo "\t${priority}\t" | priorNumToName | sed 's/\t//g') # This isn't very elegant
 	read -p "Enter State (NS,IP): " state
 	read -p "Enter Subject: " subject
 
@@ -94,7 +96,15 @@ lineToFile () {
 }
 
 selectEntry () {
-	tail -n +2 "$BUG_PROJECT" | cut -f 1,4 | fzf -i | cut -f 1
+	file="${1:-${BUG_PROJECT}}"
+	tail -n +2 "$file" | cut -f 1,4 | fzf -i | cut -f 1
+}
+
+delLine () {
+	id="$1"
+	file="$2"
+	sed "/^${id}\t.*/d" "$file" > /tmp/bug_temp
+	mv /tmp/bug_temp "$file"
 }
 
 edit () {
@@ -103,14 +113,12 @@ edit () {
 	echo A:$id:B
 	"${VISUAL:-${EDITOR:-vi}}" /tmp/bug_todo_temp
 	updatedLine="$(fileToLine /tmp/bug_todo_temp)"
-	sed "/^${id}\t.*/d" "$BUG_PROJECT" > /tmp/bug_temp
-	mv /tmp/bug_temp "$BUG_PROJECT"
+	delLine "$id" "$BUG_PROJECT"
 	printf '%s\n' "$updatedLine" >> "$BUG_PROJECT"
 }
 
 view () {
 	id=$(selectEntry)
-	lineToFile $id
 	output="$(cat /tmp/bug_todo_temp | sed "\
 	s/^ID:/\\${MAGENTA}\\${BOLD}ID:\\${RESET_COLOUR}/g; \
 	s/^Priority:/\\${MAGENTA}\\${BOLD}Priority:\\${RESET_COLOUR}/g; \
@@ -121,7 +129,7 @@ view () {
 }
 
 list () {
-	output="$(tail -n +2 "$BUG_PROJECT" | cut -f 1-4 | sed "\
+	output="$(tail -n +2 "$BUG_PROJECT" | cut -f 1-4 | priorNameToNum | sort -r -n -k 2 | priorNumToName | sed "\
 	s/\tURGENT\t/\t\\${RED}\\${BOLD}URGENT\\${RESET_COLOUR}\t/g; \
 	s/\tHigh\t/\t\\${MAGENTA}\\${BOLD}High\\${RESET_COLOUR}\t/g; \
 	s/\tMedium\t/\t\\${CYAN}\\${BOLD}Medium\\${RESET_COLOUR}\t/g; \
@@ -132,11 +140,38 @@ list () {
 	echo "$output"
 }
 
+delete () {
+	id=$(selectEntry)
+	awk "/^${id}\t/" "$BUG_PROJECT" >> "$BUG_PROJECT_DEL"
+	delLine "$id" "$BUG_PROJECT"
+}
+
+restore () {
+	id=$(selectEntry "$BUG_PROJECT_DEL")
+	awk "/^${id}\t/" "$BUG_PROJECT_DEL" >> "$BUG_PROJECT"
+	delLine "$id" "$BUG_PROJECT_DEL"
+}
+
 version () {
 	echo "bug-fork 0.5 - Simple ToDo cli manager"
 	echo "Copyright (C) 2006 Lluis Batlle i Rossell"
 	echo "With modifications bvy regexghost"
 	echo "License: GPL 2"
+}
+
+PNAME="$(basename "$0")"
+
+printHelp () {
+	echo "Usage:"
+	echo "  ${PNAME} add     - Add new todo"
+	echo "  ${PNAME} list    - List todos"
+	echo "  ${PNAME} view    - View todo details"
+	echo "  ${PNAME} edit    - Edit todo"
+	echo "  ${PNAME} delete  - Delete todo"
+	echo "  ${PNAME} restore - Restore deleted toto"
+	echo "  ${PNAME} create  - Create project files"
+	echo "  ${PNAME} project - Print project file"
+	echo "  ${PNAME} version - Version information"
 }
 
 CMD="$1"
@@ -169,6 +204,9 @@ case "$CMD" in
 		;;
 	e*)
 		edit || exit 1
+		;;
+	r*)
+		restore || exit 1
 		;;
 	*)
 		printHelp
